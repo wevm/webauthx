@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "webauthx-hono-example",
+  "main": "./src/worker/index.ts",
+  "compatibility_date": "2025-01-01",
+  "assets": {
+    "directory": "./dist/client",
+    "not_found_handling": "single-page-application",
+  },
+  "vars": {
+    "ORIGIN": "http://localhost:5173",
+    "RP_ID": "localhost",
+  },
+  "kv_namespaces": [
+    {
+      "binding": "AUTH_KV",
+      "id": "<YOUR_KV_NAMESPACE_ID>",
+      "preview_id": "<YOUR_PREVIEW_KV_NAMESPACE_ID>",
+    },
+  ],
+}

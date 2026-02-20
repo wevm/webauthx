@@ -1,0 +1,10 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "nicolo-ribaudo.oxfmt-vscode",
+  "[json]": {
+    "editor.defaultFormatter": "nicolo-ribaudo.oxfmt-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "nicolo-ribaudo.oxfmt-vscode"
+  }
+}

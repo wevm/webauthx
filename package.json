@@ -1,0 +1,55 @@
+{
+  "scripts": {
+    "build": "zile",
+    "changeset:publish": "zile publish:prepare && changeset publish && zile publish:post",
+    "changeset:version": "changeset version",
+    "check": "oxlint --fix --ignore-pattern package.json && oxfmt",
+    "check:types": "tsc -b",
+    "dev": "zile dev",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@changesets/cli": "catalog:",
+    "@types/node": "catalog:",
+    "@vitest/browser-playwright": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "zile": "catalog:"
+  },
+  "packageManager": "pnpm@10.29.3",
+  "[!start-pkg]": "",
+  "name": "webauthx",
+  "type": "module",
+  "version": "0.0.0",
+  "main": "./dist/index.js",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "dependencies": {
+    "ox": "https://pkg.pr.new/ox@21e5222"
+  },
+  "sideEffects": false,
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "src": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/client/index.d.ts",
+      "src": "./src/client/index.ts",
+      "default": "./dist/client/index.js"
+    },
+    "./server": {
+      "types": "./dist/server/index.d.ts",
+      "src": "./src/server/index.ts",
+      "default": "./dist/server/index.js"
+    }
+  }
+}

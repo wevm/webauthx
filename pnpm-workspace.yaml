@@ -1,0 +1,17 @@
+packages:
+  - 'examples/*'
+
+catalog:
+  oxfmt: latest
+  oxlint: latest
+  '@changesets/cli': latest
+  '@types/node': latest
+  '@vitest/browser-playwright': ^4.0.18
+  typescript: latest
+  vitest: latest
+  zile: latest
+
+overrides:
+  '@vitest/browser>vitest': $vitest
+  '@vitest/browser-playwright>vitest': $vitest
+  'webauthx': workspace:*

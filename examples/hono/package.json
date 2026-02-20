@@ -1,0 +1,31 @@
+{
+  "name": "webauthx-hono-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "check:types": "tsc -b",
+    "gen:types": "wrangler types",
+    "postinstall": "pnpm gen:types",
+    "preview": "pnpm build && vite preview",
+    "deploy": "pnpm build && wrangler deploy"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.7.6",
+    "hono": "^4",
+    "react": "^19",
+    "react-dom": "^19",
+    "webauthx": "latest",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^5",
+    "typescript": "^5",
+    "vite": "^6",
+    "wrangler": "^4"
+  }
+}

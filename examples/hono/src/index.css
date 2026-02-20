@@ -1,0 +1,136 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #111;
+  color: #999;
+  font-family: 'SF Mono', monospace;
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 80px auto;
+  max-width: 400px;
+  padding: 0 16px;
+}
+
+h1 {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.card {
+  border: 1px solid #222;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+}
+
+.label {
+  color: #555;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+input {
+  background: transparent;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #ccc;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  padding: 8px;
+}
+
+input::placeholder {
+  color: #444;
+}
+
+input:focus {
+  border-color: #555;
+}
+
+input:disabled {
+  opacity: 0.4;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+button {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #999;
+  cursor: pointer;
+  flex: 1;
+  font-family: inherit;
+  font-size: 12px;
+  padding: 8px;
+  transition: all 0.15s;
+}
+
+button:hover {
+  background: #222;
+  border-color: #444;
+  color: #ccc;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+
+button.logout {
+  background: transparent;
+  border-color: #2a2a2a;
+  color: #555;
+  flex: none;
+  font-size: 11px;
+  padding: 6px 8px;
+}
+
+button.logout:hover {
+  border-color: #444;
+  color: #888;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #222;
+  margin: 4px 0;
+}
+
+pre {
+  background: #0a0a0a;
+  border-radius: 4px;
+  color: #666;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-x: auto;
+  padding: 10px;
+  transition: opacity 0.15s;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+pre.flash {
+  opacity: 0.3;
+}

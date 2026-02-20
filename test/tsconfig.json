@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node", "vitest/globals", "vitest/importMeta"],
+    "paths": {
+      "webauthx": ["../src/index.ts"],
+      "webauthx/client": ["../src/client/index.ts"],
+      "webauthx/server": ["../src/server/index.ts"]
+    }
+  },
+  "include": [
+    "./**/*.ts",
+    "../src/**/*.test.ts",
+    "../src/**/*.test-d.ts",
+    "../src/**/*.browser.test.ts"
+  ]
+}
