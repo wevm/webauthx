@@ -1,6 +1,14 @@
-# webauthx
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/banner-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset=".github/banner-light.svg">
+  <img alt="webauthx" src=".github/banner-light.svg" width="100%">
+</picture>
 
-Tools for server ↔ client WebAuthn ceremony orchestration.
+<p align="center"><b>Tools for server ↔ client WebAuthn ceremony orchestration.</b></p>
+
+<p align="center">
+  <a href="#quickprompt">Quickprompt</a> · <a href="#install">Install</a> · <a href="#usage-walkthrough">Usage Walkthrough</a> · <a href="#api-reference">API Reference</a> · <a href="#license">License</a>
+</p>
 
 ## Quickprompt
 
