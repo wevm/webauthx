@@ -17,7 +17,7 @@
 Prompt your agent:
 
 ```
-Add passkey authentication to my app using curl.md/github.com/wevm/webauthx/SKILL.md, and add it to my skills.
+Add passkey authentication to my app using github.com/wevm/webauthx/blob/main/SKILL.md, and add it to my skills.
 ```
 
 ## Install
