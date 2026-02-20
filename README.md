@@ -4,6 +4,8 @@
   <img alt="webauthx" src="https://raw.githubusercontent.com/wevm/webauthx/refs/heads/main/.github/banner-light.svg" width="100%">
 </picture>
 
+<p></p>
+
 <p align="center"><b>Tools for server ↔ client WebAuthn ceremony orchestration.</b></p>
 
 <p align="center">
