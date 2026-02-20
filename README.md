@@ -206,9 +206,9 @@ const response = await Authentication.sign({ options })
 
 ##### Return Value
 
-`Promise<Authentication.Response>` — the response to send to the server.
+`Promise<Authentication.Response>` 
 
----
+Response to send to the server.
 
 #### `Registration.create`
 
@@ -231,7 +231,9 @@ const credential = await Registration.create({ options })
 
 ##### Return Value
 
-`Promise<Registration.Credential>` — the credential to send to the server.
+`Promise<Registration.Credential>` 
+
+Credential to send to the server.
 
 ---
 
@@ -264,9 +266,9 @@ const { challenge, options } = Authentication.getOptions({
 
 ##### Return Value
 
-`{ challenge: Hex; options: CredentialRequestOptions }` — the hex challenge to store and the WebAuthn options to send to the client.
+`{ challenge: Hex; options: CredentialRequestOptions }`
 
----
+Challenge to store and the WebAuthn options to send to the client.
 
 #### `Authentication.verify`
 
@@ -297,9 +299,9 @@ const valid = Authentication.verify(response, {
 
 ##### Return Value
 
-`boolean` — `true` if the signature is valid.
+`boolean`
 
----
+`true` if the signature is valid.
 
 #### `Registration.getOptions`
 
@@ -334,8 +336,6 @@ const { challenge, options } = Registration.getOptions({
 `{ challenge: Hex; options: CredentialCreationOptions }`
 
 Challenge to store and the WebAuthn options to send to the client.
-
----
 
 #### `Registration.verify`
 
