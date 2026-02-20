@@ -41,8 +41,8 @@ importers:
   .:
     dependencies:
       ox:
-        specifier: https://pkg.pr.new/ox@21e5222
-        version: https://pkg.pr.new/ox@21e5222(typescript@5.9.3)(zod@4.3.6)
+        specifier: 0.13.0
+        version: 0.13.0(typescript@5.9.3)(zod@4.3.6)
     devDependencies:
       '@changesets/cli':
         specifier: 'catalog:'
@@ -1674,9 +1674,8 @@ packages:
   outdent@0.5.0:
     resolution: {integrity: sha512-/jHxFIzoMXdqPzTaCpFzAAWhpkSjZPF4Vsn6jAfNpmbH/ymsmd7Qc6VE9BGn0L6YMj6uwpQLxCECpus4ukKS9Q==}
 
-  ox@https://pkg.pr.new/ox@21e5222:
-    resolution: {integrity: sha512-LOpOaHfC9jah2bcZ4o83afmKf7m6mc77GXUl8wNIp8xceGJbvnB7gdDyRvSom/GUrr6XJ/JRIpRIS2FzeKkAqw==, tarball: https://pkg.pr.new/ox@21e5222}
-    version: 0.12.5-21e5222.0
+  ox@0.13.0:
+    resolution: {integrity: sha512-y2WOS0EnfN88GDpyC4BaQzK0rq/VCAsu0fbFryhxnXZvALa9/kFj6o2za+ju9flivLwVI1rnM10gNONeX2tN5g==}
     peerDependencies:
       typescript: '>=5.4.0'
     peerDependenciesMeta:
@@ -3450,7 +3449,7 @@ snapshots:
 
   outdent@0.5.0: {}
 
-  ox@https://pkg.pr.new/ox@21e5222(typescript@5.9.3)(zod@4.3.6):
+  ox@0.13.0(typescript@5.9.3)(zod@4.3.6):
     dependencies:
       '@adraffy/ens-normalize': 1.11.1
       '@noble/ciphers': 1.3.0

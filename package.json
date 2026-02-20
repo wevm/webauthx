@@ -30,7 +30,7 @@
     "src"
   ],
   "dependencies": {
-    "ox": "https://pkg.pr.new/ox@21e5222"
+    "ox": "0.13.0"
   },
   "sideEffects": false,
   "module": "./dist/index.js",
