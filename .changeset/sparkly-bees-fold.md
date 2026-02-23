@@ -1,5 +1,0 @@
----
-"webauthx": minor
----
-
-Initial commit.

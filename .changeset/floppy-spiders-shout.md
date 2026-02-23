@@ -1,5 +1,0 @@
----
-"webauthx": patch
----
-
-Initial release.
