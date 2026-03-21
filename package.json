@@ -23,7 +23,6 @@
   "name": "webauthx",
   "type": "module",
   "version": "0.1.0",
-  "main": "./dist/index.js",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -31,14 +30,13 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "!src/_test"
   ],
   "dependencies": {
     "ox": "~0.14.6"
   },
   "sideEffects": false,
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
