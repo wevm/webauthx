@@ -169,7 +169,7 @@ export default function App() {
 }
 
 function PasskeyCard({ session }: { session: Session }) {
-  const icon = session.authenticator?.iconDark ?? session.authenticator?.iconLight ?? null
+  const icon = session.authenticator?.iconLight ?? session.authenticator?.iconDark ?? null
   const name = session.authenticator?.name ?? 'Unknown authenticator'
 
   return (
