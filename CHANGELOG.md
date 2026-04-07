@@ -1,5 +1,11 @@
 # webauthx
 
+## 0.1.1
+
+### Patch Changes
+
+- ae4eb01: Updated `ox` to `~0.14.11`.
+
 ## 0.1.0
 
 ### Minor Changes
