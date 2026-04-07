@@ -1,75 +1,118 @@
-import { useState } from 'react'
+import { hc } from 'hono/client'
+import { startTransition, useEffect, useEffectEvent, useState } from 'react'
 import { Authentication, Registration } from 'webauthx/client'
 
-export default function App() {
-  const [name, setName] = useState('')
-  const [loggedIn, setLoggedIn] = useState(false)
-  const [me, setMe] = useState<unknown>(null)
-  const [meLoading, setMeLoading] = useState(false)
-  const [loading, setLoading] = useState(false)
+import type { AppType } from './worker/index.ts'
 
-  const fetchMe = async () => {
-    try {
-      setMeLoading(true)
-      const [res] = await Promise.all([fetch('/me'), new Promise((r) => setTimeout(r, 200))])
-      setMe(await res.json())
-    } finally {
-      setMeLoading(false)
-    }
-  }
+const client = hc<AppType>(`${import.meta.env.BASE_URL}/`)
+
+type Authenticator = {
+  iconDark?: string
+  iconLight?: string
+  name: string
+}
+
+type Session = {
+  aaguid: string | null
+  authenticator: Authenticator | null
+  credentialId: string
+  publicKey: `0x${string}`
+}
+
+export default function App() {
+  const [displayName, setDisplayName] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [isPending, setIsPending] = useState(false)
+  const { isRefreshing, refresh, session, setSession } = useSession()
+
+  const isBusy = isPending || isRefreshing
+  const canRegister = displayName.trim().length > 0 && !isBusy
 
   async function register() {
+    setError(null)
+    setIsPending(true)
+
     try {
-      setLoading(true)
-      const { options } = await fetch('/register/options', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name }),
-      }).then((r) => r.json())
+      const registerOptionsResponse = await client.register.options.$post({
+        json: { name: displayName.trim() },
+      })
+      if (!registerOptionsResponse.ok) {
+        const errorText = await registerOptionsResponse.text()
+        console.error('Registration error:', errorText)
+        throw new Error(
+          `Request failed with status ${registerOptionsResponse.status}: ${errorText}`,
+        )
+      }
+      const { options } = await registerOptionsResponse.json()
 
-      const credential = await Registration.create({ options })
+      // TODO: Remove cast once `ox` excludes `signal` from serialized options.
+      const credential = await Registration.create({ options: options as any })
 
-      await fetch('/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ credential }),
-      }).then((r) => r.json())
+      const RegistrationResponse = await client.register.$post({
+        json: { credential },
+      })
+      if (!RegistrationResponse.ok) {
+        const errorText = await RegistrationResponse.text()
+        console.error('Registration error:', errorText)
+        throw new Error(`Request failed with status ${RegistrationResponse.status}: ${errorText}`)
+      }
 
-      setLoggedIn(true)
+      await refresh()
+      setDisplayName('')
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      setError(errorMessage)
     } finally {
-      setLoading(false)
+      setIsPending(false)
     }
   }
 
   async function login() {
+    setError(null)
+    setIsPending(true)
+
     try {
-      setLoading(true)
-
-      const { options } = await fetch('/authenticate/options', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
-      }).then((r) => r.json())
-
-      const response = await Authentication.sign({ options })
-
-      const res = await fetch('/authenticate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ response }),
+      const authenticateOptionsResponse = await client.authenticate.options.$post({
+        json: {},
       })
-      if (!res.ok) throw new Error((await res.json()).error)
+      if (!authenticateOptionsResponse.ok) {
+        const errorText = await authenticateOptionsResponse.text()
+        console.error('Authentication error:', errorText)
+        throw new Error(
+          `Request failed with status ${authenticateOptionsResponse.status}: ${errorText}`,
+        )
+      }
+      const { options } = await authenticateOptionsResponse.json()
+      // TODO: Remove cast once `ox` excludes `signal` from serialized options.
+      const response = await Authentication.sign({ options: options as any })
 
-      setLoggedIn(true)
+      await client.authenticate.$post({
+        json: { response },
+      })
+      await refresh()
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      setError(errorMessage)
     } finally {
-      setLoading(false)
+      setIsPending(false)
     }
   }
 
   async function logout() {
-    await fetch('/logout', { method: 'POST' })
-    setLoggedIn(false)
-    setMe(null)
+    setError(null)
+    setIsPending(true)
+
+    try {
+      await client.logout.$post()
+      startTransition(() => {
+        setSession(null)
+      })
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      setError(errorMessage)
+    } finally {
+      setIsPending(false)
+    }
   }
 
   return (
@@ -77,34 +120,121 @@ export default function App() {
       <h1>webauthx + Hono</h1>
 
       <div className="card">
-        {loggedIn ? (
-          <button onClick={logout}>logout</button>
+        {session ? (
+          <button className="logout" disabled={isBusy} onClick={() => void logout()} type="button">
+            logout
+          </button>
         ) : (
           <>
             <input
-              disabled={loading}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="username"
-              value={name}
+              disabled={isBusy}
+              onChange={(event) => setDisplayName(event.target.value)}
+              placeholder="display name"
+              value={displayName}
             />
-            <button disabled={loading || !name} onClick={register}>
-              register
-            </button>
-            <hr className="divider" />
-            <button disabled={loading} onClick={login}>
-              login
-            </button>
+            <div className="actions">
+              <button disabled={!canRegister} onClick={() => void register()} type="button">
+                register
+              </button>
+              <button disabled={isBusy} onClick={() => void login()} type="button">
+                login
+              </button>
+            </div>
           </>
         )}
       </div>
 
+      {error ? (
+        <div className="card">
+          <div className="label">Error</div>
+          <div className="error">{error}</div>
+        </div>
+      ) : null}
+
+      {session ? <PasskeyCard session={session} /> : null}
+
       <div className="card">
-        <div className="label">Test authenticated route</div>
-        <button disabled={meLoading} onClick={fetchMe}>
-          {meLoading ? '…' : 'GET /me'}
+        <div className="label">Session</div>
+        <button disabled={isRefreshing} onClick={() => void refresh()} type="button">
+          {isRefreshing ? '…' : 'GET /me'}
         </button>
-        {me ? <pre className={meLoading ? 'flash' : ''}>{JSON.stringify(me, null, 2)}</pre> : null}
+        {session ? (
+          <pre className={isRefreshing ? 'flash' : ''}>{JSON.stringify(session, null, 2)}</pre>
+        ) : (
+          <pre className={isRefreshing ? 'flash' : ''}>{'null'}</pre>
+        )}
       </div>
     </div>
   )
+}
+
+function PasskeyCard({ session }: { session: Session }) {
+  const icon = session.authenticator?.iconDark ?? session.authenticator?.iconLight ?? null
+  const name = session.authenticator?.name ?? 'Unknown authenticator'
+
+  return (
+    <div className="card">
+      <div className="label">Current passkey</div>
+      <div className="passkey">
+        {icon ? (
+          <img alt={`${name} icon`} className="passkey-icon" height="24" src={icon} width="24" />
+        ) : (
+          <div className="passkey-icon passkey-icon-fallback">PK</div>
+        )}
+        <div className="passkey-copy">
+          <div className="passkey-title">{name}</div>
+          <div className="passkey-meta">
+            {session.aaguid ? `AAGUID ${session.aaguid}` : 'Authenticator unavailable'}
+          </div>
+        </div>
+      </div>
+      <Detail label="credential" value={session.credentialId} />
+      <Detail label="public key" value={session.publicKey} />
+    </div>
+  )
+}
+
+function Detail({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="details">
+      <span>{label}</span>
+      <code>{value}</code>
+    </div>
+  )
+}
+
+function useSession() {
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [session, setSession] = useState<Session | null>(null)
+
+  const refresh = useEffectEvent(async () => {
+    setIsRefreshing(true)
+
+    try {
+      const sessionResponse = await client.me.$get()
+      if (!sessionResponse.ok) {
+        const errorText = await sessionResponse.text()
+        console.error('Session refresh error:', errorText)
+        throw new Error(`Request failed with status ${sessionResponse.status}: ${errorText}`)
+      }
+      const session = await sessionResponse.json()
+
+      startTransition(() => {
+        setSession(session)
+      })
+    } finally {
+      setIsRefreshing(false)
+    }
+  })
+
+  useEffect(() => {
+    void refresh()
+  }, [])
+
+  return {
+    isRefreshing,
+    refresh,
+    session,
+    setSession,
+  }
 }

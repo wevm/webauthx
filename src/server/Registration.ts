@@ -1,6 +1,8 @@
 import { Hex } from 'ox'
 import { Credential as Credential_, Registration, type Types } from 'ox/webauthn'
 
+import * as Aaguid from './Aaguid.js'
+
 /** Credential. */
 export type Credential = Credential_.Credential<true>
 
@@ -8,7 +10,9 @@ export type Credential = Credential_.Credential<true>
 export type Options = Types.CredentialCreationOptions<true>
 
 /** Registration response. */
-export type Response = Registration.Response<true>
+export type Response = Registration.Response<true> & {
+  aaguid: string | undefined
+}
 
 /**
  * Generates serialized `PublicKeyCredentialCreationOptions` for registration.
@@ -72,7 +76,10 @@ export declare namespace getOptions {
 export function verify(credential: Credential, options: verify.Options): Response {
   const deserialized = Credential_.deserialize(credential)
   const result = Registration.verify({ ...options, credential: deserialized })
-  return Registration.serializeResponse(result)
+  return {
+    ...Registration.serializeResponse(result),
+    aaguid: Aaguid.extract(credential),
+  }
 }
 
 export declare namespace verify {

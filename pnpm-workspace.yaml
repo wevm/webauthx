@@ -8,7 +8,7 @@ catalog:
   '@changesets/cli': latest
   '@types/node': latest
   '@vitest/browser-playwright': ^4.0.18
-  typescript: latest
+  typescript: ^5
   vitest: latest
   zile: latest
 

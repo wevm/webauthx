@@ -8,9 +8,18 @@ export default defineConfig({
       webauthx: path.resolve(import.meta.dirname, 'src'),
       'webauthx/client': path.resolve(import.meta.dirname, 'src/client/index.ts'),
       'webauthx/server': path.resolve(import.meta.dirname, 'src/server/index.ts'),
+      'webauthx/server/aaguid': path.resolve(import.meta.dirname, 'src/server/Aaguid.ts'),
     },
     globals: true,
     projects: [
+      {
+        extends: true,
+        test: {
+          name: 'unit',
+          include: ['src/**/*.test.ts'],
+          exclude: ['src/**/*.browser.test.ts'],
+        },
+      },
       {
         extends: true,
         test: {

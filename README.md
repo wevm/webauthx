@@ -104,8 +104,21 @@ app.post('/register/verify', async (request) => {
   })
 
   // Persist the credential for future authentication.
-  await store.storeCredential(result.credential)
+  await store.storeCredential({
+    ...result.credential,
+    aaguid: result.aaguid,
+  })
 })
+```
+
+#### 4. Resolve Authenticator Name (Optional)
+
+```ts
+import * as Aaguid from 'webauthx/server/aaguid'
+
+const info = await Aaguid.lookup({ id: storedCredential.aaguid })
+// => { name: '1Password', iconLight?: 'data:image/...', iconDark?: 'data:image/...' }
+// => null
 ```
 
 ### Authentication (Log in)
@@ -199,14 +212,14 @@ const response = await Authentication.sign({ options })
 
 ##### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `getFn` | `function` | Custom credential request function (for testing). |
+| Parameter | Type                       | Description                                        |
+| --------- | -------------------------- | -------------------------------------------------- |
+| `getFn`   | `function`                 | Custom credential request function (for testing).  |
 | `options` | `CredentialRequestOptions` | WebAuthn options from `Authentication.getOptions`. |
 
 ##### Return Value
 
-`Promise<Authentication.Response>` 
+`Promise<Authentication.Response>`
 
 Response to send to the server.
 
@@ -224,14 +237,14 @@ const credential = await Registration.create({ options })
 
 ##### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `createFn` | `function` | Custom credential creation function (for testing). |
-| `options` | `CredentialCreationOptions` | WebAuthn options from `Registration.getOptions`. |
+| Parameter  | Type                        | Description                                        |
+| ---------- | --------------------------- | -------------------------------------------------- |
+| `createFn` | `function`                  | Custom credential creation function (for testing). |
+| `options`  | `CredentialCreationOptions` | WebAuthn options from `Registration.getOptions`.   |
 
 ##### Return Value
 
-`Promise<Registration.Credential>` 
+`Promise<Registration.Credential>`
 
 Credential to send to the server.
 
@@ -256,13 +269,13 @@ const { challenge, options } = Authentication.getOptions({
 
 ##### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `challenge` | `Hex` | Optional challenge. A random 32-byte hex value is generated if omitted. |
-| `credentialId` | `string \| string[]` | Credential ID(s) to allow. |
-| `rpId` | `string` | Relying party ID. |
-| `timeout` | `number` | Timeout in milliseconds. |
-| `userVerification` | `string` | User verification requirement. |
+| Parameter          | Type                 | Description                                                             |
+| ------------------ | -------------------- | ----------------------------------------------------------------------- |
+| `challenge`        | `Hex`                | Optional challenge. A random 32-byte hex value is generated if omitted. |
+| `credentialId`     | `string \| string[]` | Credential ID(s) to allow.                                              |
+| `rpId`             | `string`             | Relying party ID.                                                       |
+| `timeout`          | `number`             | Timeout in milliseconds.                                                |
+| `userVerification` | `string`             | User verification requirement.                                          |
 
 ##### Return Value
 
@@ -289,13 +302,13 @@ const valid = Authentication.verify(response, {
 
 ##### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `options.challenge` | `Hex` | Expected challenge. |
-| `options.origin` | `string \| string[]` | Expected origin(s). |
-| `options.publicKey` | `Hex` | The stored P-256 public key (hex). |
-| `options.rpId` | `string` | Expected relying party ID. |
-| `response` | `Authentication.Response` | The authentication response from the client. |
+| Parameter           | Type                      | Description                                  |
+| ------------------- | ------------------------- | -------------------------------------------- |
+| `options.challenge` | `Hex`                     | Expected challenge.                          |
+| `options.origin`    | `string \| string[]`      | Expected origin(s).                          |
+| `options.publicKey` | `Hex`                     | The stored P-256 public key (hex).           |
+| `options.rpId`      | `string`                  | Expected relying party ID.                   |
+| `response`          | `Authentication.Response` | The authentication response from the client. |
 
 ##### Return Value
 
@@ -320,16 +333,16 @@ const { challenge, options } = Registration.getOptions({
 
 ##### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `attestation` | `string` | Attestation conveyance preference. |
-| `authenticatorSelection` | `object` | Authenticator selection criteria. |
-| `challenge` | `Hex` | Optional challenge. A random 32-byte hex value is generated if omitted. |
-| `excludeCredentialIds` | `string[]` | Credential IDs to exclude (prevent re-registration). |
-| `name` | `string` | Display name for the credential (shorthand for `user.name`). |
-| `rp` | `{ id: string; name: string }` | Relying party identifier and display name. |
-| `timeout` | `number` | Timeout in milliseconds. |
-| `user` | `{ name: string; displayName?: string; id?: BufferSource }` | User account descriptor. Alternative to `name`. |
+| Parameter                | Type                                                        | Description                                                             |
+| ------------------------ | ----------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `attestation`            | `string`                                                    | Attestation conveyance preference.                                      |
+| `authenticatorSelection` | `object`                                                    | Authenticator selection criteria.                                       |
+| `challenge`              | `Hex`                                                       | Optional challenge. A random 32-byte hex value is generated if omitted. |
+| `excludeCredentialIds`   | `string[]`                                                  | Credential IDs to exclude (prevent re-registration).                    |
+| `name`                   | `string`                                                    | Display name for the credential (shorthand for `user.name`).            |
+| `rp`                     | `{ id: string; name: string }`                              | Relying party identifier and display name.                              |
+| `timeout`                | `number`                                                    | Timeout in milliseconds.                                                |
+| `user`                   | `{ name: string; displayName?: string; id?: BufferSource }` | User account descriptor. Alternative to `name`.                         |
 
 ##### Return Value
 
@@ -355,17 +368,75 @@ const result = Registration.verify(credential, {
 
 ##### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `credential` | `Registration.Credential` | The credential from the client. |
-| `options.challenge` | `Hex \| Uint8Array \| ((challenge: string) => boolean)` | Expected challenge value or async validator function. |
-| `options.origin` | `string \| string[]` | Expected origin(s) (e.g. `"https://example.com"`). |
-| `options.rpId` | `string` | Relying party ID (e.g. `"example.com"`). |
-| `options.userVerification` | `string` | User verification requirement. Default: `'required'`. |
+| Parameter                  | Type                                                    | Description                                           |
+| -------------------------- | ------------------------------------------------------- | ----------------------------------------------------- |
+| `credential`               | `Registration.Credential`                               | The credential from the client.                       |
+| `options.challenge`        | `Hex \| Uint8Array \| ((challenge: string) => boolean)` | Expected challenge value or async validator function. |
+| `options.origin`           | `string \| string[]`                                    | Expected origin(s) (e.g. `"https://example.com"`).    |
+| `options.rpId`             | `string`                                                | Relying party ID (e.g. `"example.com"`).              |
+| `options.userVerification` | `string`                                                | User verification requirement. Default: `'required'`. |
 
 ##### Return Value
 
-`Registration.Response`
+`Registration.Response & { aaguid: string }`
+
+Includes the verified credential, signature counter, and the credential's
+authenticator AAGUID.
+
+### `webauthx/server/aaguid`
+
+Looks up friendly authenticator metadata from the community-maintained AAGUID
+registry. By default, the registry is fetched from the upstream combined JSON
+file and cached in-memory for subsequent lookups.
+
+##### Usage
+
+```ts
+import * as Aaguid from 'webauthx/server/aaguid'
+
+const info = await Aaguid.lookup({
+  id: '08987058-cadc-4b81-b6e1-30de50dcbe96',
+})
+```
+
+##### `Aaguid.extract`
+
+Extracts the AAGUID from a serialized registration credential.
+
+```ts
+const aaguid = Aaguid.extract(credential)
+```
+
+Returns `string | undefined`.
+
+##### `Aaguid.lookup`
+
+Looks up authenticator metadata by AAGUID.
+
+```ts
+const info = await Aaguid.lookup({ id: aaguid })
+```
+
+Returns `Aaguid.Info | null`.
+
+Parameters:
+
+| Parameter    | Type           | Description                                                              |
+| ------------ | -------------- | ------------------------------------------------------------------------ |
+| `cache`      | `boolean`      | Reuse an in-memory cache for the selected `remoteList`. Default: `true`. |
+| `fetchFn`    | `typeof fetch` | Custom fetch implementation.                                             |
+| `id`         | `string`       | AAGUID to resolve.                                                       |
+| `remoteList` | `string`       | Override the remote registry URL. Defaults to `Aaguid.remoteList`.       |
+
+##### `Aaguid.Info`
+
+```ts
+type Info = {
+  name: string
+  iconLight?: string | undefined
+  iconDark?: string | undefined
+}
+```
 
 ## License
 

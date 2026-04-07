@@ -6,5 +6,8 @@
   },
   "[jsonc]": {
     "editor.defaultFormatter": "nicolo-ribaudo.oxfmt-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
   }
 }

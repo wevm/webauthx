@@ -4,7 +4,7 @@
     "changeset:publish": "zile publish:prepare && changeset publish && zile publish:post",
     "changeset:version": "changeset version",
     "check": "oxlint --fix --ignore-pattern package.json && oxfmt",
-    "check:types": "tsc -b",
+    "check:types": "tsc -b && pnpm --filter='*' --parallel --stream check:types",
     "dev": "zile dev",
     "test": "vitest"
   },
@@ -54,6 +54,11 @@
       "types": "./dist/server/index.d.ts",
       "src": "./src/server/index.ts",
       "default": "./dist/server/index.js"
+    },
+    "./server/aaguid": {
+      "types": "./dist/server/Aaguid.d.ts",
+      "src": "./src/server/Aaguid.ts",
+      "default": "./dist/server/Aaguid.js"
     }
   }
 }

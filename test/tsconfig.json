@@ -5,7 +5,8 @@
     "paths": {
       "webauthx": ["../src/index.ts"],
       "webauthx/client": ["../src/client/index.ts"],
-      "webauthx/server": ["../src/server/index.ts"]
+      "webauthx/server": ["../src/server/index.ts"],
+      "webauthx/server/aaguid": ["../src/server/Aaguid.ts"]
     }
   },
   "include": [
