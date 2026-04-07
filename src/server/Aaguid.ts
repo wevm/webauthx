@@ -15,7 +15,7 @@ export const remoteList =
  *
  * @example
  * ```ts
- * import * as Aaguid from 'webauthx/server/aaguid'
+ * import { Aaguid } from 'webauthx/server'
  *
  * const aaguid = Aaguid.extract(credential)
  * ```
@@ -37,7 +37,7 @@ export function extract(credential: Aaguid.extract['Options']): Aaguid.extract['
  *
  * @example
  * ```ts
- * import * as Aaguid from 'webauthx/server/aaguid'
+ * import { Aaguid } from 'webauthx/server'
  *
  * const info = await Aaguid.lookup({
  *   id: '08987058-cadc-4b81-b6e1-30de50dcbe96',

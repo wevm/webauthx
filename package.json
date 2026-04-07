@@ -54,11 +54,6 @@
       "types": "./dist/server/index.d.ts",
       "src": "./src/server/index.ts",
       "default": "./dist/server/index.js"
-    },
-    "./server/aaguid": {
-      "types": "./dist/server/Aaguid.d.ts",
-      "src": "./src/server/Aaguid.ts",
-      "default": "./dist/server/Aaguid.js"
     }
   }
 }

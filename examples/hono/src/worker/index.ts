@@ -3,8 +3,7 @@ import { Hono } from 'hono'
 import { deleteCookie, getSignedCookie, setSignedCookie } from 'hono/cookie'
 import { createMiddleware } from 'hono/factory'
 import type { CookieOptions } from 'hono/utils/cookie'
-import { Authentication, Registration } from 'webauthx/server'
-import * as Aaguid from 'webauthx/server/aaguid'
+import { Authentication, Registration, Aaguid } from 'webauthx/server'
 import { z } from 'zod'
 
 type CredentialRecord = {

@@ -114,7 +114,7 @@ app.post('/register/verify', async (request) => {
 #### 4. Resolve Authenticator Name (Optional)
 
 ```ts
-import * as Aaguid from 'webauthx/server/aaguid'
+import { Aaguid } from 'webauthx/server'
 
 const info = await Aaguid.lookup({ id: storedCredential.aaguid })
 // => { name: '1Password', iconLight?: 'data:image/...', iconDark?: 'data:image/...' }
@@ -383,7 +383,7 @@ const result = Registration.verify(credential, {
 Includes the verified credential, signature counter, and the credential's
 authenticator AAGUID.
 
-### `webauthx/server/aaguid`
+### `webauthx/server`
 
 Looks up friendly authenticator metadata from the community-maintained AAGUID
 registry. By default, the registry is fetched from the upstream combined JSON
@@ -392,7 +392,7 @@ file and cached in-memory for subsequent lookups.
 ##### Usage
 
 ```ts
-import * as Aaguid from 'webauthx/server/aaguid'
+import { Aaguid } from 'webauthx/server'
 
 const info = await Aaguid.lookup({
   id: '08987058-cadc-4b81-b6e1-30de50dcbe96',

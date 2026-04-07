@@ -1,7 +1,6 @@
 import { expect, test } from 'vitest'
 import { Registration as Registration_client } from 'webauthx/client'
-import { Registration as Registration_server } from 'webauthx/server'
-import * as Aaguid from 'webauthx/server/aaguid'
+import { Registration as Registration_server, Aaguid } from 'webauthx/server'
 
 import { rpId, rpName } from '../../test/constants.js'
 

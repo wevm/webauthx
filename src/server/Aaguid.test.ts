@@ -1,8 +1,7 @@
 import { Base64, Hex, P256, PublicKey } from 'ox'
 import { Authenticator } from 'ox/webauthn'
 import { expect, test } from 'vitest'
-import { Registration } from 'webauthx/server'
-import * as Aaguid from 'webauthx/server/aaguid'
+import { Registration, Aaguid } from 'webauthx/server'
 
 test('extracts aaguid from verified registration credentials', () => {
   const challenge = Hex.random(32)
