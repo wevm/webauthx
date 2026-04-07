@@ -10,6 +10,7 @@
   "vars": {
     "ORIGIN": "http://localhost:5173",
     "RP_ID": "localhost",
+    "SECRET_KEY": "",
   },
   "kv_namespaces": [
     {
