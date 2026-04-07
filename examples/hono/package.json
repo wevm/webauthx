@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "check:types": "tsc -b",
+    "check:types": "pnpm build && tsc -b",
     "gen:types": "wrangler types",
     "postinstall": "pnpm gen:types",
     "preview": "pnpm build && vite preview",
