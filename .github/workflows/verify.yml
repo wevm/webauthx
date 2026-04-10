@@ -35,7 +35,7 @@ jobs:
         uses: ./.github/actions/install-dependencies
 
       - name: Install Playwright browsers
-        run: pnpx playwright@1.58.2 install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Run tests
         run: pnpm run test --bail=1
