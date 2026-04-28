@@ -6,6 +6,7 @@
     "check": "oxlint --fix --ignore-pattern package.json && oxfmt",
     "check:types": "tsc -b && pnpm --filter='*' --parallel --stream check:types",
     "dev": "zile dev",
+    "validate-skill": "uvx --from skills-ref agentskills validate skills/webauthx",
     "test": "vitest"
   },
   "devDependencies": {

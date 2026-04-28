@@ -17,7 +17,7 @@
 Prompt your agent:
 
 ```
-Add passkey authentication to my app using https://raw.githubusercontent.com/wevm/webauthx/refs/heads/main/SKILL.md, and add it to my skills.
+Add passkey authentication to my app using https://raw.githubusercontent.com/wevm/webauthx/refs/heads/main/skills/webauthx/SKILL.md, and add it to my skills.
 ```
 
 ## Install
@@ -32,6 +32,12 @@ pnpm i webauthx
 
 ```bash
 bun i webauthx
+```
+
+### Install skill
+
+```bash
+npx skills@latest install wevm/webauthx
 ```
 
 ## Usage Walkthrough
