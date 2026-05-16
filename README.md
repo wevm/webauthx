@@ -104,9 +104,11 @@ app.post('/register/verify', async (request) => {
   })
 
   // Persist the credential for future authentication.
+  // Include transports so they can be forwarded during authentication.
   await store.storeCredential({
     ...result.credential,
     aaguid: result.aaguid,
+    transports: credential.transports,
   })
 })
 ```
@@ -133,9 +135,16 @@ import { Authentication } from 'webauthx/server'
 app.post('/auth/options', async (request) => {
   const { credentialId } = await request.json()
 
+  // Look up the stored credential to get transport hints.
+  const storedCredential = await store.getCredential(credentialId)
+
   // Generate a challenge and WebAuthn options for the client.
+  // Passing transports helps browsers and extensions (e.g. 1Password)
+  // route the assertion to the correct authenticator.
   const { challenge, options } = Authentication.getOptions({
-    credentialId,
+    credentials: [
+      { id: storedCredential.id, transports: storedCredential.transports },
+    ],
     rpId: 'example.com',
   })
 
@@ -269,13 +278,14 @@ const { challenge, options } = Authentication.getOptions({
 
 ##### Parameters
 
-| Parameter          | Type                 | Description                                                             |
-| ------------------ | -------------------- | ----------------------------------------------------------------------- |
-| `challenge`        | `Hex`                | Optional challenge. A random 32-byte hex value is generated if omitted. |
-| `credentialId`     | `string \| string[]` | Credential ID(s) to allow.                                              |
-| `rpId`             | `string`             | Relying party ID.                                                       |
-| `timeout`          | `number`             | Timeout in milliseconds.                                                |
-| `userVerification` | `string`             | User verification requirement.                                          |
+| Parameter          | Type                                       | Description                                                                                                                      |
+| ------------------ | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| `challenge`        | `Hex`                                      | Optional challenge. A random 32-byte hex value is generated if omitted.                                                          |
+| `credentialId`     | `string \| string[]`                       | Credential ID(s) to allow.                                                                                                       |
+| `credentials`      | `(string \| { id, transports? })[]`        | Credential descriptors with optional transport hints. Takes precedence over `credentialId`. Helps browsers route to the correct authenticator. |
+| `rpId`             | `string`                                   | Relying party ID.                                                                                                                |
+| `timeout`          | `number`                                   | Timeout in milliseconds.                                                                                                         |
+| `userVerification` | `string`                                   | User verification requirement.                                                                                                   |
 
 ##### Return Value
 

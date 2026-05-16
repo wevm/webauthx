@@ -7,6 +7,12 @@ export type Options = Types.CredentialRequestOptions<true>
 /** Authentication response. */
 export type Response = Authentication.Response<true>
 
+/** Credential descriptor with optional transport hints. */
+export type CredentialDescriptor = {
+  id: string
+  transports?: Types.AuthenticatorTransport[] | undefined
+}
+
 /**
  * Generates serialized `PublicKeyCredentialRequestOptions` for authentication.
  *
@@ -26,18 +32,62 @@ export type Response = Authentication.Response<true>
  *   return Response.json(options)
  * }
  * ```
+ *
+ * @example
+ * ```ts
+ * // With transport hints for better credential discovery
+ * const { challenge, options } = Authentication.getOptions({
+ *   credentials: [
+ *     { id: storedCredential.id, transports: storedCredential.transports },
+ *   ],
+ *   rpId: 'example.com',
+ * })
+ * ```
  */
 export function getOptions(options: getOptions.Options = {}): getOptions.ReturnType {
   const challenge = options.challenge ?? Hex.random(32)
+
+  // When `credentials` is provided, extract plain IDs for ox and
+  // inject transports into the serialized output afterward.
+  const { credentials, ...rest } = options
+  const credentialId = credentials
+    ? credentials.map((c) => (typeof c === 'string' ? c : c.id))
+    : rest.credentialId
+
   const serialized = Authentication.serializeOptions(
-    Authentication.getOptions({ ...options, challenge }),
+    Authentication.getOptions({ ...rest, credentialId, challenge }),
   )
+
+  // Patch transports into the serialized allowCredentials when descriptors
+  // include them (ox's getOptions does not forward transports).
+  if (credentials && serialized.publicKey?.allowCredentials) {
+    const descriptors = credentials.map((c) =>
+      typeof c === 'string' ? { id: c } : c,
+    )
+    for (let i = 0; i < serialized.publicKey.allowCredentials.length; i++) {
+      const transports = descriptors[i]?.transports
+      if (transports) {
+        serialized.publicKey.allowCredentials[i]!.transports = transports
+      }
+    }
+  }
+
   return { challenge, options: serialized }
 }
 
 export declare namespace getOptions {
   type Options = Omit<Authentication.getOptions.Options, 'challenge'> & {
     challenge?: Hex.Hex | undefined
+    /**
+     * Credential descriptors with optional transport hints.
+     *
+     * When provided, takes precedence over `credentialId`. Each entry can be
+     * a plain credential ID string or an object with `id` and `transports`.
+     * Transport hints (e.g. `['internal', 'hybrid']`) help browsers and
+     * credential managers (like 1Password) route the assertion to the correct
+     * authenticator.
+     */
+    credentials?: (string | CredentialDescriptor)[] | undefined
   }
   type ReturnType = {
     challenge: Hex.Hex
