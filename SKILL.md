@@ -15,7 +15,7 @@ Install `webauthx` and import from `webauthx/server` and `webauthx/client`.
 
 ## Registration Flow (Sign Up)
 
-1. **Server:** call `Registration.getOptions({ name, rp })`. Returns `{ challenge, options }`.
+1. **Server:** call `Registration.getOptions({ name, rp, authenticatorSelection: { residentKey: 'required', userVerification: 'required' } })`. Returns `{ challenge, options }`. `residentKey: 'required'` forces a discoverable credential — required for passkey-first login (auth step 1 below) and for some password managers (e.g. Dashlane) to handle the ceremony.
 2. Store the `challenge` server-side (signed cookie, DB, or KV). Must be single-use and short-lived (≤5 min).
 3. **Client:** pass `options` to `Registration.create({ options })`. Triggers the browser passkey prompt. Must be called from a user gesture (click/tap).
 4. **Client:** POST the returned credential to the server.
@@ -102,7 +102,7 @@ If using cookies to store challenges (like the Hono example):
 
 ### Registration
 
-- Explicitly set `userVerification: 'required'` for passkey-grade assurance. Don't rely on defaults since they may vary across libraries and spec versions.
+- For passkeys, explicitly set `authenticatorSelection: { residentKey: 'required', userVerification: 'required' }`. `userVerification: 'required'` gives passkey-grade assurance; `residentKey: 'required'` forces a *discoverable* credential. The default (`residentKey: 'preferred'`) permits a non-discoverable credential, which breaks discoverable / passkey-first login (the empty-`credentialId` flow below) and can cause some password managers (e.g. Dashlane) to skip the create ceremony entirely. Don't rely on defaults — they vary across libraries and spec versions.
 - Set `attestation: 'none'` unless you have a specific business need for device provenance. Attestation validation is complex and easy to get wrong.
 - Use `excludeCredentialIds` to prevent duplicate registration with the same authenticator.
 - If registering a credential for an existing account, require an authenticated session. Otherwise an attacker could attach their passkey to a victim's account.
