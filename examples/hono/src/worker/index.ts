@@ -52,6 +52,9 @@ const app = new Hono<{ Bindings: Env }>()
       const { challenge, options } = Registration.getOptions({
         name,
         rp: { id: c.env.RP_ID, name: 'webauthx Demo' },
+        // Force a discoverable (resident) credential so passkeys work with
+        // passkey-first login and password managers like Dashlane.
+        authenticatorSelection: { residentKey: 'required', userVerification: 'required' },
       })
 
       await setSignedCookie(c, 'challenge', challenge, c.env.SECRET_KEY, cookie.challenge)

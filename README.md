@@ -49,9 +49,14 @@ app.post('/register/options', async (request) => {
   const { name } = await request.json()
 
   // Generate a challenge and WebAuthn options for the client.
+  // `residentKey: 'required'` forces a discoverable (resident) credential — needed
+  // for usernameless / passkey-first login, and for some password managers (e.g.
+  // Dashlane) to handle the create ceremony at all. Passing `authenticatorSelection`
+  // replaces the default, so set `userVerification: 'required'` here too.
   const { challenge, options } = Registration.getOptions({
     name,
     rp: { id: 'example.com', name: 'Example' },
+    authenticatorSelection: { residentKey: 'required', userVerification: 'required' },
   })
 
   // Persist challenge for verification in the next step.
@@ -336,7 +341,7 @@ const { challenge, options } = Registration.getOptions({
 | Parameter                | Type                                                        | Description                                                             |
 | ------------------------ | ----------------------------------------------------------- | ----------------------------------------------------------------------- |
 | `attestation`            | `string`                                                    | Attestation conveyance preference.                                      |
-| `authenticatorSelection` | `object`                                                    | Authenticator selection criteria.                                       |
+| `authenticatorSelection` | `object`                                                    | Authenticator selection criteria. For passkeys use `{ residentKey: 'required', userVerification: 'required' }` so the credential is discoverable (see the Registration walkthrough).                                       |
 | `challenge`              | `Hex`                                                       | Optional challenge. A random 32-byte hex value is generated if omitted. |
 | `excludeCredentialIds`   | `string[]`                                                  | Credential IDs to exclude (prevent re-registration).                    |
 | `name`                   | `string`                                                    | Display name for the credential (shorthand for `user.name`).            |
